@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from lms.models import Course, Lesson
 # Create your models here.
 class CustomUser(AbstractUser):
     username = models.CharField('Имя пользователя', max_length=20)
@@ -18,3 +20,13 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+class Payment(models.Model):
+    CHOICES = [('cash', 'наличные'),
+            ('transfer', 'перевод')]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    date = models.DateField('Дата оплаты', blank=True, null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True)
+    payment_summ = models.PositiveIntegerField('Сумма оплаты')
+    method = models.CharField('Способ оплаты', choices=CHOICES, max_length=20)

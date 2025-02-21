@@ -1,4 +1,3 @@
-from email.mime import base
 from django.db import router
 from django.urls import path
 from lms.apps import LmsConfig
