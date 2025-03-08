@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from lms.models import Course, Lesson
+from lms.validators import YoutubeURLValidator
+from lms.models import Course, Lesson, Subscription
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -12,13 +13,19 @@ class LessonSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     lesson_count = serializers.SerializerMethodField()
     lessons = LessonSerializer(many=True, read_only=True)
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = "__all__"
+        validators = [YoutubeURLValidator(field='video')]
 
     def get_lesson_count(self, instance):
         return instance.lessons.all().count()
+    
+    def get_is_subscribed(self, instance):
+        user = self.context['request'].user
+        return Subscription.objects.filter(user=user, course=instance).exists()
 
     def create(self, validated_data):
         lessons = validated_data.pop("lessons")
@@ -26,3 +33,8 @@ class CourseSerializer(serializers.ModelSerializer):
         for lesson in lessons:
             Lesson.objects.create(**lesson, course=new_course)
         return new_course
+
+class SubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = "__all__"
