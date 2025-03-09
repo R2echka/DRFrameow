@@ -3,8 +3,11 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 
+from django.utils import timezone
+
 from users.models import CustomUser, Payment
 from users.serializers import PaymentSerializer, UserSerializer
+from users.services import create_price, create_stripe_product, create_stripe_session
 
 
 # Create your views here.
@@ -14,6 +17,15 @@ class PaymentViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ("course", "lesson", "method")
     ordering_fields = ("date",)
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user, date = timezone.now().date())
+        product = create_stripe_product(payment)
+        price = create_price(payment.payment_summ, product)
+        session_id, payment_link = create_stripe_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
 
 
 class UserViewSet(viewsets.ModelViewSet):
