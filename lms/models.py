@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.db import models
 from users.models import CustomUser
 
@@ -37,3 +38,16 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, blank=True, null=True
+    )
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'subscription {self.pk}'
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
