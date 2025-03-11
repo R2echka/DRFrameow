@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.forms import URLField
 
 
 # Create your models here.
@@ -37,4 +38,13 @@ class Payment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True)
     payment_summ = models.PositiveIntegerField("Сумма оплаты")
+    session_id = models.CharField("ID сессии", max_length=255, blank=True, null=True)
     method = models.CharField("Способ оплаты", choices=CHOICES, max_length=20)
+    link = models.URLField("Ссылка на оплату", max_length=400, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Платёж"
+        verbose_name_plural = "Платежи"
+
+    def __str__(self):
+        return self.session_id
