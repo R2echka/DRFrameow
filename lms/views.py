@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from lms.models import Course, Lesson, Subscription
 from lms.paginators import CustomPaginator
 from lms.serializers import CourseSerializer, LessonSerializer
+from lms.tasks import check_course_update
 from users.permissions import Moderator, Owner
 
 
@@ -20,6 +21,14 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+    
+    def update(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        serializer = self.get_serializer(course, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            check_course_update.delay(pk)
+        return Response(data=serializer.data)
 
     def get_permissions(self):
         if self.action == "create":
