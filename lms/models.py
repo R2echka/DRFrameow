@@ -11,7 +11,7 @@ class Course(models.Model):
     owner = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, blank=True, null=True
     )
-
+    
     def __str__(self):
         return self.name
 
