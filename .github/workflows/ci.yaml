@@ -22,7 +22,6 @@ jobs:
     
     - name: Check Django installation
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
         source venv/bin/activate
         python -c "import django; print(django.get_version())"
         EOF
