@@ -57,6 +57,7 @@ jobs:
 
       - name: Install dependencies on server
         run: |
+          cd /DRFrameow
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           sudo apt update
           sudo apt install -y python3-venv python3-full
