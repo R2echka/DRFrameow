@@ -62,9 +62,7 @@ jobs:
           cd ${{ secrets.DEPLOY_DIR }}
           python3 -m venv venv
           source venv/bin/activate
-          pip install django
-          pip install poetry
-          poetry install ---no-root
+          pip install -r requirements.txt
           EOF
 
       - name: Apply migrations on server
@@ -86,5 +84,5 @@ jobs:
       - name: Restart application
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          sudo systemctl restart myapp.service
+          sudo systemctl restart config.service
           EOF
