@@ -53,12 +53,12 @@ jobs:
 
       - name: Copy project files to server
         run: |
-          rsync -avz --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}
+          rsync -avz --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
 
       - name: Install dependencies on server
         run: |
-          cd /DRFrameow
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd ${{ secrets.DEPLOY_DIR }}
           sudo apt update
           sudo apt install -y python3-venv python3-full
           python3 -m venv venv
@@ -70,6 +70,7 @@ jobs:
       - name: Apply migrations on server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd ${{ secrets.DEPLOY_DIR }}
           source venv/bin/activate
           python manage.py migrate
           EOF
