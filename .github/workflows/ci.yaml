@@ -53,6 +53,8 @@ jobs:
 
       - name: Copy project files to server
         run: |
+          mkdir -p ${{ secrets.DEPLOY_DIR }}
+          cd ${{ secrets.DEPLOY_DIR }}
           rsync -avz --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}
 
       - name: Install dependencies on server
