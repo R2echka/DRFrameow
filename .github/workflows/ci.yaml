@@ -62,7 +62,9 @@ jobs:
           cd ${{ secrets.DEPLOY_DIR }}
           python3 -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt
+          pip install django
+          pip install poetry
+          poetry install ---no-root
           EOF
 
       - name: Apply migrations on server
