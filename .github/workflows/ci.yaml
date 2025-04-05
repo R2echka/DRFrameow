@@ -22,6 +22,7 @@ jobs:
     
     - name: Set environment variables
       run: echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+        echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> $GITHUB_ENV
     
     # - name: Run migrations
     #   run: python manage.py migrate
